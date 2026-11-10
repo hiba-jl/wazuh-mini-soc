@@ -34,10 +34,17 @@ Mettre en place la chaîne complète d'un SOC, de la détection à la réponse :
 | `soc-wazuh-manager` | SIEM Wazuh 4.9.2, tableau de bord | 192.168.152.142 |
 | `soc-target-01` | Cible Ubuntu 22.04 avec agent Wazuh | 192.168.152.143 |
 | `soc-thehive` | TheHive 5.2, organisation `Mini-SOC-Stage` | 192.168.152.151 |
-| `soc-shuffle` | Shuffle (automatisation) | |
-| Poste Windows | Génère les tentatives SSH | |
+| `soc-shuffle` | Shuffle (automatisation) | — |
+| Poste Windows | Génère les tentatives SSH | — |
 
 Les adresses sont des IP privées du lab.
+
+## MITRE ATT&CK
+
+| Tactique | Technique | ID |
+|---|---|---|
+| Credential Access | Brute Force : Password Guessing | T1110.001 |
+| Lateral Movement | Remote Services : SSH | T1021.004 |
 
 ## Scénario de test
 
@@ -48,24 +55,26 @@ Les adresses sont des IP privées du lab.
 2. L'agent Wazuh remonte les journaux d'authentification. Wazuh déclenche des alertes comme *« syslog: User missed the password more than one time »*.
 3. Les alertes arrivent dans TheHive et peuvent être transformées en cas.
 4. TheHive envoie une notification webhook (`Shuffle-BruteForce-Response`) à chaque `AlertCreated`.
-5. Shuffle exécute le workflow `Reponse-BruteForce-SSH` : réception du webhook, formatage du message (`IP: 10.0.0.5 - Alerte: SSH brute force - Host: SOC-Target-01`), puis requête HTTP POST de test (statut 200).
+5. Shuffle exécute le workflow `Reponse-BruteForce-SSH` : réception du webhook, formatage du message (`IP: 10.0.0.5 - Alerte: SSH brute force - Host: SOC-Target-01`, données de test envoyées manuellement pour valider le workflow), puis requête HTTP POST de test (statut 200).
 
 ## Captures d'écran
 
-| Étape | Capture |
-|---|---|
-| Wazuh : tableau de bord | `docs/screenshots/wazuh.png` |
-| Wazuh : agent `soc-target-01` actif | `docs/screenshots/agent-statut-active.png` |
-| Attaque SSH : échecs de connexion | `docs/screenshots/faille2.png` |
-| Attaque SSH : test de 12 tentatives | `docs/screenshots/testcomplet1.png` |
-| TheHive : alertes Wazuh reçues | `docs/screenshots/alerts.png` |
-| TheHive : cas créé depuis une alerte | `docs/screenshots/alerte-case-fonctionne.png` |
-| TheHive : notification vers Shuffle | `docs/screenshots/webhook-shuffle.png` |
-| Shuffle : workflow en exécution | `docs/screenshots/webhookfonctionne.png` |
-| Shuffle : résultat de l'exécution | `docs/screenshots/webhookfonctionne3.png` |
+### 1. Attaque : 12 tentatives SSH depuis le poste attaquant
+![Test de 12 tentatives](docs/screenshots/testcomplet1.png)
 
-![Alertes dans TheHive](docs/screenshots/alerts.png)
+### 2. Détection : tableau de bord Wazuh
+![Wazuh tableau de bord](docs/screenshots/wazuh.png)
+
+### 3. Qualification : alertes Wazuh reçues dans TheHive
+![Alertes Wazuh dans TheHive](docs/screenshots/alerts.png)
+
+### 4. Investigation : cas créé depuis une alerte
+![Cas créé dans TheHive](docs/screenshots/alerte-case-fonctionne.png)
+
+### 5. Réponse : workflow Shuffle déclenché
 ![Workflow Shuffle](docs/screenshots/webhookfonctionne.png)
+
+Les autres captures (agent actif, échecs de connexion, configuration du webhook, résultat de l'exécution…) sont disponibles dans le dossier [`docs/screenshots`](docs/screenshots).
 
 ## Limites
 
@@ -85,6 +94,7 @@ Les adresses sont des IP privées du lab.
 - Le rôle d'un **SIEM**, d'un outil de **gestion d'incidents** et d'un **SOAR**, et comment ils s'enchaînent
 - Déployer un agent Wazuh et lire les alertes de sécurité
 - Relier des outils avec des **webhooks**
+- Associer une attaque aux techniques **MITRE ATT&CK**
 - Documenter un incident de bout en bout
 
 ## Auteure
