@@ -71,8 +71,8 @@ Les adresses sont des IP privées du lab.
 ### 4. Investigation : cas créé depuis une alerte
 ![Cas créé dans TheHive](docs/screenshots/alerte-case-fonctionne.png)
 
-### 5. Réponse : workflow Shuffle déclenché
-![Workflow Shuffle](docs/screenshots/webhookfonctionne.png)
+### 5. Réponse automatisée (simulée) : exécution du workflow Shuffle
+![Résultat de l'exécution Shuffle](docs/screenshots/webhookfonctionne3.png)
 
 Les autres captures (agent actif, échecs de connexion, configuration du webhook, résultat de l'exécution…) sont disponibles dans le dossier [`docs/screenshots`](docs/screenshots).
 
